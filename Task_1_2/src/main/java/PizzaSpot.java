@@ -33,7 +33,7 @@ public class PizzaSpot {
 
     private void startWorkers(){
         for(int i = 0 ; i < dataForSystem.getCooksCount(); i++)
-            executorService.execute(new Cook(ordersQueue, storage));
+            executorService.execute(new Cook(ordersQueue, storage, workingDay));
 
         int[] deliveries = dataForSystem.getCapacitiesOfDeliveriesBags();
         for(int i = 0; i < deliveries.length; i++)

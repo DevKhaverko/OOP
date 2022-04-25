@@ -10,24 +10,29 @@ public class Cook implements Runnable{
     private BlockingQueue ordersQueue;
     private BlockingQueue storage;
 
-    Cook(BlockingQueue ordersQueue, BlockingQueue storage){
+    private WorkingDay workingDay;
+
+    Cook(BlockingQueue ordersQueue, BlockingQueue storage, WorkingDay workingDay){
         this.ordersQueue = ordersQueue;
         this.storage = storage;
+        this.workingDay = workingDay;
     }
 
     @Override
     public void run() {
         ((Storage)storage).cookProccecing();
-        while (!ordersQueue.isEmpty()){
-            try {
-                Order order = (Order) ordersQueue.poll();
-                if(order != null){
-                    cooking(order);
-                    storage.put(order);
-                    System.out.println("|id: "+ String.format("%2d",order.getId()) + "| WAS PUT TO STORAGE");
+        while (!workingDay.isOver()) {
+            while (!ordersQueue.isEmpty()){
+                try {
+                    Order order = (Order) ordersQueue.poll();
+                    if(order != null){
+                        cooking(order);
+                        storage.put(order);
+                        System.out.println("|id: "+ String.format("%2d",order.getId()) + "| WAS PUT TO STORAGE");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
         System.out.println("Cook done..");
